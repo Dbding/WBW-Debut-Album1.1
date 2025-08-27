@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>王不亡 - 首張專輯</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- 引入 Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 自訂樣式 */
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .spotify-embed {
+            border-radius: 12px;
+            height: 80px;
+        }
+        #visualizer-container {
+            width: 100%;
+            cursor: grab;
+            background-color: #05050a; /* 深藍色背景 */
+        }
+        .track-item {
+            transition: background-color 0.3s ease;
+        }
+        .track-item:hover {
+            background-color: #282828;
+        }
+
+        /* SVG 動態封面樣式 */
+        .svg-cover {
+            width: 100%;
+            height: 100%;
+        }
+        .svg-cover .glow {
+            animation: pulse 4s ease-in-out infinite;
+        }
+        .svg-cover .rotate {
+            animation: spin 20s linear infinite;
+            transform-origin: center;
+        }
+        @keyframes pulse {
+            0%, 100% { filter: drop-shadow(0 0 2px #fefae0); opacity: 0.7; }
+            50% { filter: drop-shadow(0 0 10px #fefae0); opacity: 1; }
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header 區塊 -->
+    <header class="text-center py-12 px-4 bg-black">
+        <!-- 3D 視覺化工具容器 (響應式高度) -->
+        <div id="visualizer-container" class="mx-auto mb-8 rounded-lg shadow-lg h-80 md:h-[400px]"></div>
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
+            <!-- SVG 動態封面 -->
+            <div class="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 bg-black rounded-lg shadow-2xl p-4">
+                <svg class="svg-cover" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#e9d5a1; stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#bc6c25; stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <g class="rotate" opacity="0.3">
+                        <path d="M 100,20 L 180,100 L 100,180 L 20,100 Z" fill="none" stroke="#6c757d" stroke-width="1"/>
+                        <circle cx="100" cy="100" r="60" fill="none" stroke="#6c757d" stroke-width="1"/>
+                    </g>
+                    <g class="glow" stroke="url(#goldGradient)" stroke-width="4" fill="none" stroke-linecap="round">
+                        <path d="M 60 70 L 100 40 L 140 70" />
+                        <path d="M 70 100 L 100 75 L 130 100" />
+                        <path d="M 80 130 L 100 110 L 120 130" />
+                    </g>
+                    <text x="100" y="170" font-family="Noto Sans TC, sans-serif" font-size="28" fill="#fefae0" text-anchor="middle" font-weight="bold">王不亡</text>
+                </svg>
+            </div>
+            <div class="text-left">
+                <!-- 加大字體並加入藍勾勾 -->
+                <div class="flex items-center gap-x-3">
+                    <h1 class="text-5xl md:text-7xl font-bold tracking-tight">王不亡</h1>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 md:h-10 md:w-10 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a.75.75 0 00-1.06-1.06L9 10.94l-1.72-1.72a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.06 0l3.75-3.75z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <p class="text-2xl md:text-3xl text-gray-300 mt-2">Wang Bu-Wang</p>
+                <p class="text-lg text-gray-400 mt-4 max-w-prose">
+                    一張探索存在、記憶與虛無的音樂專輯。透過聲音的紋理，我們試圖在縫隙中尋找家園，在廢鐵中看見夢想。
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主內容區塊 -->
+    <main class="max-w-4xl mx-auto p-4 md:p-8">
+        <h2 class="text-4xl font-bold mb-6 border-b-2 border-gray-700 pb-2">曲目列表</h2>
+        
+        <!-- 歌曲列表 -->
+        <div id="track-list" class="space-y-4">
+            <!-- JavaScript 會在這裡動態插入歌曲 -->
+        </div>
+    </main>
+
+    <!-- Footer 區塊 -->
+    <footer class="text-center py-8 mt-12 border-t border-gray-800">
+        <p class="text-gray-500">&copy; 2024 Wang Bu-Wang. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 歌曲資料
+            const tracks = [
+                { title: "王不亡，亡的是你們", url: "https://open.spotify.com/embed/track/6QqvzkZSwqUW23akhozgg6" },
+                { title: "地板知道", url: "https://open.spotify.com/embed/track/7dVAbcs7Ny68KIClokYorj" },
+                { title: "縫隙家園", url: "https://open.spotify.com/embed/track/2Q3U5eEMSHH9REaxG601dk" },
+                { title: "廢鐵猿之夢", url: "https://open.spotify.com/embed/track/76enWYcfd8knUKkDFi42ze" },
+                { title: "雪偏舟", url: "https://open.spotify.com/embed/track/10hfnAE4WpkXfpIX4GVy2B" },
+                { title: "蝦花曾開過", url: "https://open.spotify.com/embed/track/1gzwif6jTetRcm5CuxxIPY" },
+                { title: "我像嗎", url: "https://open.spotify.com/embed/track/2g5Y3yIRRiSootIf9c9rKA" },
+                { title: "Let Light In", url: "https://open.spotify.com/embed/track/4Ci4VGTxwRkHDnnPiyOShz" },
+                { title: "照完還是空", url: "https://open.spotify.com/embed/track/5EsBs0AdGIhWFQTCswJ1pJ" },
+                { title: "王令開始", url: "https://open.spotify.com/embed/track/4mRstoVpZnLJkweHPJRkbx" }
+            ];
+
+            const trackListContainer = document.getElementById('track-list');
+
+            // 動態生成歌曲列表
+            tracks.forEach((track, index) => {
+                const trackElement = document.createElement('div');
+                trackElement.className = 'track-item bg-gray-900 p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4';
+                trackElement.innerHTML = `
+                    <div class="flex items-center w-full sm:w-auto">
+                        <span class="text-gray-400 text-xl w-8">${index + 1}.</span>
+                        <p class="text-xl font-medium">${track.title}</p>
+                    </div>
+                    <div class="w-full sm:w-auto sm:max-w-xs md:max-w-sm flex-shrink-0">
+                         <iframe style="border-radius:12px" 
+                            src="${track.url}?utm_source=generator&theme=0" 
+                            width="100%" 
+                            height="80" 
+                            frameBorder="0" 
+                            allowfullscreen="" 
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                `;
+                trackListContainer.appendChild(trackElement);
+            });
+
+            // Three.js 視覺化工具 - 暴雨與閃電
+            const container = document.getElementById('visualizer-container');
+            if (container) {
+                let scene, camera, renderer, rain, rainVelocities;
+                let ambientLight, directionalLight;
+                // 新增：閃電相關變數
+                let lightning, lightningMaterial;
+                let lightningActive = false;
+                let lightningFadeTimeout;
+
+                function init() {
+                    const containerRect = container.getBoundingClientRect();
+                    
+                    scene = new THREE.Scene();
+                    scene.fog = new THREE.Fog(0x05050a, 1, 1000);
+                    
+                    camera = new THREE.PerspectiveCamera(75, containerRect.width / containerRect.height, 1, 2000);
+                    camera.position.z = 500;
+                    
+                    renderer = new THREE.WebGLRenderer({ antialias: true });
+                    renderer.setPixelRatio(window.devicePixelRatio);
+                    renderer.setSize(containerRect.width, containerRect.height);
+                    container.appendChild(renderer.domElement);
+                    
+                    ambientLight = new THREE.AmbientLight(0x101030);
+                    scene.add(ambientLight);
+                    
+                    // 新增一個微弱的定向光，模擬月光
+                    directionalLight = new THREE.DirectionalLight(0x303050, 0.2);
+                    directionalLight.position.set(0, 1, 0.5);
+                    scene.add(directionalLight);
+
+
+                    // 雨滴粒子系統
+                    const rainGeometry = new THREE.BufferGeometry();
+                    const rainVertices = [];
+                    rainVelocities = [];
+                    for (let i = 0; i < 15000; i++) {
+                        rainVertices.push(
+                            Math.random() * 2000 - 1000,
+                            Math.random() * 2000 - 1000,
+                            Math.random() * 2000 - 1000
+                        );
+                        rainVelocities.push({ y: Math.random() * 10 + 10 });
+                    }
+                    rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(rainVertices, 3));
+                    const rainMaterial = new THREE.PointsMaterial({ color: 0xaaaaee, size: 2, transparent: true, opacity: 0.7 });
+                    rain = new THREE.Points(rainGeometry, rainMaterial);
+                    scene.add(rain);
+
+                    // 新增：初始化閃電線條
+                    lightningMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 });
+                    const lightningGeometry = new THREE.BufferGeometry();
+                    lightning = new THREE.Line(lightningGeometry, lightningMaterial);
+                    scene.add(lightning);
+
+
+                    window.addEventListener('resize', onWindowResize);
+                }
+
+                // 新增：生成閃電路徑的函數
+                function createLightning() {
+                    const points = [];
+                    const startPoint = new THREE.Vector3(Math.random() * 800 - 400, 500, Math.random() * 400 - 200);
+                    points.push(startPoint);
+                    
+                    let currentPoint = startPoint.clone();
+                    for (let i = 0; i < 10; i++) { // 閃電主幹
+                        const nextPoint = currentPoint.clone();
+                        nextPoint.y -= 50 + Math.random() * 50;
+                        nextPoint.x += Math.random() * 60 - 30;
+                        nextPoint.z += Math.random() * 60 - 30;
+                        points.push(nextPoint);
+
+                        // 隨機產生分岔
+                        if (Math.random() > 0.6) {
+                            const branchPoint = nextPoint.clone();
+                            branchPoint.y -= 30 + Math.random() * 30;
+                            branchPoint.x += Math.random() * 100 - 50;
+                            points.push(branchPoint, nextPoint); // 畫出分岔再回來
+                        }
+                        currentPoint = nextPoint;
+                    }
+                    
+                    lightning.geometry.setFromPoints(points);
+                    lightning.geometry.attributes.position.needsUpdate = true;
+                }
+
+
+                function onWindowResize() {
+                    const containerRect = container.getBoundingClientRect();
+                    camera.aspect = containerRect.width / containerRect.height;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(containerRect.width, containerRect.height);
+                }
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    render();
+                }
+
+                function render() {
+                    const positions = rain.geometry.attributes.position.array;
+                    for (let i = 0; i < positions.length; i += 3) {
+                        positions[i+1] -= rainVelocities[i/3].y;
+                        if (positions[i+1] < -1000) {
+                            positions[i+1] = 1000;
+                        }
+                    }
+                    rain.geometry.attributes.position.needsUpdate = true;
+                    
+                    // 新增：閃電觸發與動畫邏輯
+                    if (Math.random() > 0.985 && !lightningActive) {
+                        lightningActive = true;
+                        createLightning();
+                        lightning.visible = true;
+                        ambientLight.intensity = 0.8; // 照亮整個場景
+                        
+                        // 清除上一個計時器
+                        clearTimeout(lightningFadeTimeout);
+
+                        // 短暫延遲後讓閃電消失
+                        lightningFadeTimeout = setTimeout(() => {
+                           lightning.visible = false;
+                           ambientLight.intensity = 0.1; // 恢復黑暗
+                           lightningActive = false;
+                        }, 150 + Math.random() * 100);
+                    }
+
+                    renderer.render(scene, camera);
+                }
+
+                init();
+                animate();
+            }
+        });
+    </script>
+</body>
+</html>
