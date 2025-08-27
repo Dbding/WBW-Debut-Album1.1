@@ -163,7 +163,6 @@
             if (container) {
                 let scene, camera, renderer, rain, rainVelocities;
                 let ambientLight, directionalLight;
-                // 新增：閃電相關變數
                 let lightning, lightningMaterial;
                 let lightningActive = false;
                 let lightningFadeTimeout;
@@ -185,11 +184,9 @@
                     ambientLight = new THREE.AmbientLight(0x101030);
                     scene.add(ambientLight);
                     
-                    // 新增一個微弱的定向光，模擬月光
                     directionalLight = new THREE.DirectionalLight(0x303050, 0.2);
                     directionalLight.position.set(0, 1, 0.5);
                     scene.add(directionalLight);
-
 
                     // 雨滴粒子系統
                     const rainGeometry = new THREE.BufferGeometry();
@@ -201,43 +198,54 @@
                             Math.random() * 2000 - 1000,
                             Math.random() * 2000 - 1000
                         );
-                        rainVelocities.push({ y: Math.random() * 10 + 10 });
+                        // 再次減慢雨速
+                        rainVelocities.push({ y: Math.random() * 3 + 2 });
                     }
                     rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(rainVertices, 3));
                     const rainMaterial = new THREE.PointsMaterial({ color: 0xaaaaee, size: 2, transparent: true, opacity: 0.7 });
                     rain = new THREE.Points(rainGeometry, rainMaterial);
                     scene.add(rain);
 
-                    // 新增：初始化閃電線條
-                    lightningMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 });
+                    // 初始化閃電線條
+                    lightningMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 3 }); // 加粗閃電
                     const lightningGeometry = new THREE.BufferGeometry();
                     lightning = new THREE.Line(lightningGeometry, lightningMaterial);
                     scene.add(lightning);
 
-
                     window.addEventListener('resize', onWindowResize);
                 }
 
-                // 新增：生成閃電路徑的函數
+                // 生成更真實閃電路徑的函數
                 function createLightning() {
                     const points = [];
                     const startPoint = new THREE.Vector3(Math.random() * 800 - 400, 500, Math.random() * 400 - 200);
                     points.push(startPoint);
                     
                     let currentPoint = startPoint.clone();
-                    for (let i = 0; i < 10; i++) { // 閃電主幹
+                    let segments = 15 + Math.floor(Math.random() * 10); // 增加段數
+
+                    for (let i = 0; i < segments; i++) {
                         const nextPoint = currentPoint.clone();
-                        nextPoint.y -= 50 + Math.random() * 50;
-                        nextPoint.x += Math.random() * 60 - 30;
-                        nextPoint.z += Math.random() * 60 - 30;
+                        let y_move = 500 / segments; // 平均向下移動
+                        nextPoint.y -= y_move + (Math.random() - 0.5) * y_move;
+                        nextPoint.x += (Math.random() - 0.5) * 80;
+                        nextPoint.z += (Math.random() - 0.5) * 80;
                         points.push(nextPoint);
 
-                        // 隨機產生分岔
-                        if (Math.random() > 0.6) {
-                            const branchPoint = nextPoint.clone();
-                            branchPoint.y -= 30 + Math.random() * 30;
-                            branchPoint.x += Math.random() * 100 - 50;
-                            points.push(branchPoint, nextPoint); // 畫出分岔再回來
+                        // 隨機產生更多、更長的分岔
+                        if (Math.random() > 0.5 && i > 2 && i < segments - 2) {
+                            const branchStart = nextPoint.clone();
+                            let branchCurrent = branchStart.clone();
+                            let branchSegments = 5 + Math.floor(Math.random() * 5);
+                            for (let j = 0; j < branchSegments; j++) {
+                                const branchNext = branchCurrent.clone();
+                                branchNext.y -= (40 + Math.random() * 40);
+                                branchNext.x += (Math.random() - 0.5) * 100;
+                                points.push(branchNext);
+                                branchCurrent = branchNext;
+                            }
+                            // 畫完分岔後，回到主幹繼續
+                            points.push(nextPoint);
                         }
                         currentPoint = nextPoint;
                     }
@@ -245,7 +253,6 @@
                     lightning.geometry.setFromPoints(points);
                     lightning.geometry.attributes.position.needsUpdate = true;
                 }
-
 
                 function onWindowResize() {
                     const containerRect = container.getBoundingClientRect();
@@ -269,22 +276,21 @@
                     }
                     rain.geometry.attributes.position.needsUpdate = true;
                     
-                    // 新增：閃電觸發與動畫邏輯
+                    // 閃電觸發與動畫邏輯
                     if (Math.random() > 0.985 && !lightningActive) {
                         lightningActive = true;
                         createLightning();
                         lightning.visible = true;
-                        ambientLight.intensity = 0.8; // 照亮整個場景
+                        ambientLight.intensity = 1.5; // 更強的閃光
                         
-                        // 清除上一個計時器
                         clearTimeout(lightningFadeTimeout);
 
-                        // 短暫延遲後讓閃電消失
+                        // 更短促的閃電持續時間
                         lightningFadeTimeout = setTimeout(() => {
                            lightning.visible = false;
                            ambientLight.intensity = 0.1; // 恢復黑暗
                            lightningActive = false;
-                        }, 150 + Math.random() * 100);
+                        }, 100 + Math.random() * 50);
                     }
 
                     renderer.render(scene, camera);
